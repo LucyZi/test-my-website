@@ -53,8 +53,13 @@ if (window.location.pathname.includes("part1.html")) {
         sessionStorage.setItem('state', state);
         sessionStorage.setItem('zip', zip);
 
-        // Redirect to part2.html
-        window.location.href = "https://lucyzi.github.io/web-data-cb/part2.html";
+        // 显示 part2Iframe
+        const part2Iframe = parent.document.getElementById('part2Iframe');
+        if (part2Iframe) {
+            part2Iframe.style.display = "block"; // 显示 part2Iframe
+            part2Iframe.contentWindow.location.reload(); // 重新加载 part2.html 内容
+        }
+
     });
 }
 
@@ -93,9 +98,6 @@ function parseResponse(data) {
             // 先加载 AcsData，再加载 SubjectAcsData
             fetchAcsData(tract, stateFips, countyFips)
                 .then(() => fetchSubjectAcsData(tract, stateFips, countyFips))
-                .then(() => {
-                    document.getElementById('contentLoaded').style.display = 'block';
-                })
                 .catch(error => console.error("Error fetching data:", error));
         } else {
             document.getElementById('error').innerHTML = 'Census tract data not available.';

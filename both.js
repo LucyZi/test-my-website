@@ -52,36 +52,43 @@ if (window.location.pathname.includes("part1.html")) {
         sessionStorage.setItem('city', city);
         sessionStorage.setItem('state', state);
         sessionStorage.setItem('zip', zip);
-
-        // 显示 part2Iframe
-        const part2Iframe = parent.document.getElementById('part2Iframe');
-        if (part2Iframe) {
-            part2Iframe.style.display = "block"; // 显示 part2Iframe
-            part2Iframe.contentWindow.location.reload(); // 重新加载 part2.html 内容
-        }
+        sessionStorage.setItem('showPart2', 'true');  // Set trigger flag
 
     });
 }
 
 // Part 2: Fetch data and display results in part2.html
 if (window.location.pathname.includes("part2.html")) {
-    window.onload = function() {
-        const street = sessionStorage.getItem('street');
-        const city = sessionStorage.getItem('city');
-        const state = sessionStorage.getItem('state');
-        const zip = sessionStorage.getItem('zip');
+    // Periodically check for the trigger flag every 500ms
+    const checkFlag = setInterval(function() {
+        const showPart2 = sessionStorage.getItem('showPart2');
+        if (showPart2 === 'true') {
+            // Flag is set, clear it and proceed with data load
+            sessionStorage.setItem('showPart2', '');  // Clear the flag
+            clearInterval(checkFlag);  // Stop the interval
 
-        if (street && city && state && zip) {
-            // Construct API URL and create a JSONP request
-            const apiUrl = `https://geocoding.geo.census.gov/geocoder/geographies/address?street=${encodeURIComponent(street)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}&benchmark=Public_AR_Current&vintage=Current_Current&format=jsonp&callback=parseResponse`;
-            const script = document.createElement('script');
-            script.src = apiUrl;
-            document.body.appendChild(script);
-        } else {
-            console.error("Missing address data in sessionStorage");
+            // Display the part2 iframe
+            document.body.style.display = "block";
+
+            // Retrieve stored address data
+            const street = sessionStorage.getItem('street');
+            const city = sessionStorage.getItem('city');
+            const state = sessionStorage.getItem('state');
+            const zip = sessionStorage.getItem('zip');
+
+            if (street && city && state && zip) {
+                // Construct API URL and create a JSONP request
+                const apiUrl = `https://geocoding.geo.census.gov/geocoder/geographies/address?street=${encodeURIComponent(street)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}&benchmark=Public_AR_Current&vintage=Current_Current&format=jsonp&callback=parseResponse`;
+                const script = document.createElement('script');
+                script.src = apiUrl;
+                document.body.appendChild(script);
+            } else {
+                console.error("Missing address data in sessionStorage");
+            }
         }
-    };
+    }, 500);  // Check every 500 milliseconds
 }
+
 
 
 function parseResponse(data) {

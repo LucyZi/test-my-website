@@ -93,6 +93,9 @@ function parseResponse(data) {
             // 先加载 AcsData，再加载 SubjectAcsData
             fetchAcsData(tract, stateFips, countyFips)
                 .then(() => fetchSubjectAcsData(tract, stateFips, countyFips))
+                .then(() => {
+                    document.getElementById('contentLoaded').style.display = 'block';
+                })
                 .catch(error => console.error("Error fetching data:", error));
         } else {
             document.getElementById('error').innerHTML = 'Census tract data not available.';

@@ -6,7 +6,7 @@ document.head.appendChild(script);
 let variableMap = {};
 let subjectVariableMap = {};
 let currentPage = 1;
-const rowsPerPage = 20;
+const rowsPerPage = 15;
 let tableData = [];
 
 async function fetchVariableMap() {
@@ -32,62 +32,65 @@ async function fetchVariableMap() {
 fetchVariableMap();
 
 
+// 表单提交事件监听器
+document.getElementById('censusForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // 阻止默认表单提交
+    document.getElementById('error').innerHTML = '';
+    document.getElementById('searchButton').classList.add('active');
+
+    // 获取表单数据
+    const street = document.getElementById('street').value;
+    const city = document.getElementById('city').value;
+    const state = document.getElementById('state').value;
+    const zip = document.getElementById('zip').value;
+
+    const formData = { street, city, state, zip };
+
+    // 调用 API 获取 census tract 数据
+    const apiUrl = `https://geocoding.geo.census.gov/geocoder/geographies/address?street=${encodeURIComponent(street)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}&benchmark=Public_AR_Current&vintage=Current_Current&format=jsonp&callback=parseResponse`;
+    const script = document.createElement('script');
+    script.src = apiUrl;
+    document.body.appendChild(script);
+
+    // 向 part2.html 发送表单数据
+    const targetIframe = document.querySelector('iframe[src="https://lucyzi.github.io/web-data-cb/part2.html"]');
+    if (targetIframe) {
+        targetIframe.contentWindow.postMessage(formData, "https://lucyzi.github.io");
+    }
+});
 
 
 
-// Part 1: Handle form submission in part1.html
-if (window.location.pathname.includes("part1.html")) {
-    document.getElementById('censusForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        document.getElementById('error').innerHTML = '';
-        document.getElementById('searchButton').classList.add('active');
 
-        const street = document.getElementById('street').value;
-        const city = document.getElementById('city').value;
-        const state = document.getElementById('state').value;
-        const zip = document.getElementById('zip').value;
 
-        // Store data in sessionStorage
-        sessionStorage.setItem('street', street);
-        sessionStorage.setItem('city', city);
-        sessionStorage.setItem('state', state);
-        sessionStorage.setItem('zip', zip);
-        sessionStorage.setItem('showPart2', 'true');  // Set trigger flag
 
-    });
-}
 
-// Part 2: Fetch data and display results in part2.html
-if (window.location.pathname.includes("part2.html")) {
-    // Periodically check for the trigger flag every 500ms
-    const checkFlag = setInterval(function() {
-        const showPart2 = sessionStorage.getItem('showPart2');
-        if (showPart2 === 'true') {
-            // Flag is set, clear it and proceed with data load
-            sessionStorage.setItem('showPart2', '');  // Clear the flag
-            clearInterval(checkFlag);  // Stop the interval
-
-            // Display the part2 iframe
-            document.body.style.display = "block";
-
-            // Retrieve stored address data
-            const street = sessionStorage.getItem('street');
-            const city = sessionStorage.getItem('city');
-            const state = sessionStorage.getItem('state');
-            const zip = sessionStorage.getItem('zip');
-
-            if (street && city && state && zip) {
-                // Construct API URL and create a JSONP request
-                const apiUrl = `https://geocoding.geo.census.gov/geocoder/geographies/address?street=${encodeURIComponent(street)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}&benchmark=Public_AR_Current&vintage=Current_Current&format=jsonp&callback=parseResponse`;
-                const script = document.createElement('script');
-                script.src = apiUrl;
-                document.body.appendChild(script);
-            } else {
-                console.error("Missing address data in sessionStorage");
-            }
+// 监听消息事件，从 part1.html 接收表单数据
+window.addEventListener('message', function (event) {
+    if (event.origin === "https://lucyzi.github.io") {
+        const formData = event.data;
+        // 检查接收到的数据是否包含完整的地址信息
+        if (formData.street && formData.city && formData.state && formData.zip) {
+            fetchData(formData); // 调用表格数据生成函数
         }
-    }, 500);  // Check every 500 milliseconds
+    }
+});
+
+// 表格数据生成函数
+function fetchData(formData) {
+    const { street, city, state, zip } = formData;
+
+    // 使用地址信息生成 API URL
+    const apiUrl = `https://geocoding.geo.census.gov/geocoder/geographies/address?street=${encodeURIComponent(street)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}&benchmark=Public_AR_Current&vintage=Current_Current&format=jsonp&callback=parseResponse`;
+    
+    // 请求地址数据
+    const script = document.createElement('script');
+    script.src = apiUrl;
+    document.body.appendChild(script);
 }
+
+
+
 
 
 

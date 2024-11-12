@@ -15,15 +15,16 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://github.com/',
+  url: 'https://LucyZi.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/test-my-website/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'LucyZi', // Usually your GitHub org/user name.
+  projectName: 'test-my-website', // Usually your repo name.
+  deploymentBranch: 'gh-pages',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -88,13 +89,7 @@ const config = {
             position: 'left',
             label: 'Tutorial',
           },
-          {
-            href: 'https://lucyzi.github.io/web-data-cb/acs data api and geocoding api.html', // 直接跳转的外部链接
-            label: 'Neighborhood',
-            position: 'left',
-            target: '_blank', // 在新标签页打开链接
-            rel: 'noopener noreferrer', // 安全属性
-          },
+
           {to: '/blog', label: 'Blog', position: 'left'},
       //    {
       //      href: 'https://github.com/facebook/docusaurus',

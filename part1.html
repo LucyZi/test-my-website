@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 1 - Web Data CB</title>
+    <link rel="stylesheet" href="https://lucyzi.github.io/web-data-cb/style.css"> <!-- 调用外部CSS -->
+</head>
+<body>
+
+    <h1>American Community Survey 5-Year Data<br>(2018-2022)</h1>
+
+    <div class="content-container">
+        <form id="censusForm">
+            <div class="form-row">
+                <div>
+                    <label for="street">Street Address (e.g., 2201 Old Brick Rd):</label>
+                    <input type="text" id="street" name="street" required>
+                </div>
+                <div>
+                    <label for="city">City (e.g., Glen Allen):</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label for="state">State (e.g., VA):</label>
+                    <input type="text" id="state" name="state" required>
+                </div>
+                <div>
+                    <label for="zip">ZIP Code (e.g., 23060):</label>
+                    <input type="text" id="zip" name="zip" required>
+                </div>
+            </div>
+            <button type="submit" id="searchButton">Search</button>
+        </form>
+
+        <div id="error"></div>
+    </div>
+
+    <script src="https://lucyzi.github.io/web-data-cb/both.js"></script> <!-- 调用外部JS -->
+</body>
+</html>

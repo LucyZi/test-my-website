@@ -6,7 +6,7 @@
     <title>American Community Survey 5-Year Data (2018-2022)</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial;
             margin: 16px;
         }
         h1 {
@@ -16,18 +16,36 @@
             margin-bottom: 22px;
             width: 100%;
         }
-        .content-container {
-            text-align: center;
-            margin: 20px auto;
+        /* Outer container for consistent width */
+        .main-container {
             max-width: 1000px;
-            width: 80%;
+            width: 90%;
+            margin: 0 auto;
             box-sizing: border-box;
         }
+        /* Inner containers inherit the main-container width */
+        .content-container, .table-container {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 0;
+        }
+        .content-container {
+            text-align: center;
+        }
+
+        .table-container {
+            width: 100%; /* 容器宽度 */
+            text-align: left; /* 左对齐 */
+            margin: 0 auto; /* 将容器居中 */
+            padding: 0;
+        }
+
         #censusForm {
             width: 100%;
             display: block;
             margin: 0 auto;
             text-align: left;
+            padding: 0;
         }
         label {
             margin: 10px 0;
@@ -40,7 +58,18 @@
             padding: 8px;
             width: 100%;
             border-radius: 8px;
-            border: 1px solid #ccc;
+            border: 2px solid #252b4b; /* Default border color */
+            background-color: #ffffff; /* Ensure white background */
+        }
+        input:focus {
+            border-color: #ed7d31; /* Border color when input is focused */
+            outline: none; /* Remove default outline for cleaner look */
+        }
+        /* Override autofill background color */
+        input:-webkit-autofill {
+            background-color: #f5f5f5 !important; /* Force white background for autofilled inputs */
+            -webkit-box-shadow: 0 0 0px 1000px #f5f5f5 inset !important; /* Override background color */
+            color: inherit; /* Maintain text color */
         }
         .form-row {
             display: flex;
@@ -55,20 +84,20 @@
             padding: 12px 28px;
             font-size: 17px;
             font-weight: bold;
-            background-color: #739ad7;
+            background-color: #565984;
             color: white;
             border: none;
             cursor: pointer;
             border-radius: 8px;
         }
         button:hover {
-            background-color: #262d4a;
+            background-color: #252b4b;
         }
         button:active {
-            background-color: #262d4a;
+            background-color: #252b4b;
         }
         button.active {
-            background-color: #262d4a;
+            background-color: #252b4b;
             color: white;
         }
         #error {
@@ -84,16 +113,38 @@
             box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
         }
 
-        .table-container {
-            width: 100%; /* 容器宽度 */
-            text-align: left; /* 左对齐 */
-            margin: 0 auto; /* 将容器居中 */
-        }
+
         
-        #tractInfo {
-            font-weight: bold;
+        /* Container for search count and tract info */
+
+        .info-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between; /* Aligns one element left, the other right */
+            align-items: center;
             margin-bottom: 10px;
+            width: 100%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            box-sizing: border-box;
+            padding: 0;
         }
+
+        #searchCount {
+            font-size: 16px;
+            text-align: left;
+            padding: 5px;
+            display: none;
+        }
+
+        #tractInfo {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: left;
+            padding: 5px;
+        }
+
 
 
         table {
@@ -107,7 +158,7 @@
             text-align: left;
         }
         #resultsTable th {
-            background-color: #739ad7;
+            background-color: #565984;
             color: white;
         }
         #resultsTable td:nth-child(1), #resultsTable th:nth-child(1) {
@@ -116,31 +167,66 @@
         #resultsTable td:nth-child(2), #resultsTable th:nth-child(2) {
             width: 20%;
         }
-        #searchCount {
-            margin-top: 10px;
-            font-size: 16px;
-            display: none;
-            text-align: left;
-            margin-left: 20px;
-        }
+
 
         .pagination {
-            margin: 20px 0;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
-        .pagination button {
+        
+        .pagination button,
+        .pagination input,
+        .pagination span {
             display: inline-block;
-            background-color: #ece8d6;
-            margin: 0 5px;
+            background-color: transparent;
+            border: none;
+            border-radius: 5px;
             padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 8px;
+            margin: 0;
+            font-size: 16px;
+            color: #000000;
         }
+        
+        .pagination button {
+            cursor: pointer;
+        }
+        
+        .pagination input {
+            cursor: pointer;
+            width: 50px;
+            padding-left: 1%;
+            text-align: center;
+            border: 2px solid #ed7d31;
+            border-radius: 5px;
+        }
+        
         .pagination button.active {
-            background-color: #d48651;
+            background-color: #ed7d31;
             color: white;
         }
+        
+        .pagination button:disabled {
+            background-color: transparent;
+            cursor: not-allowed;
+            color: #000000;
+        }
 
+        /* Style for clickable "skip" text */
+        .clickable-text {
+            cursor: pointer; /* Shows pointer cursor */
+            font-size: 14px;
+            color: #000000;
+        }
+
+        /* Style for plain "page" text */
+        .plain-text {
+            cursor: default; /* Regular text cursor */
+            font-size: 14px;
+            color: black;
+        }
+  
         @media (min-width: 800px) {
             h1 {
                 text-align: center;
@@ -158,7 +244,6 @@
                 margin: 0 auto;
             }
             .content-container {
-                max-width:850px;
                 margin: 0 auto;
                 width: 100%;
             }
@@ -174,13 +259,12 @@
                 max-width: 380px;
             }
             input {
-                width: 100%;
+                width: 92%;
             }
 
             .table-container {
-                width: 70%;   /* 桌面版上容器占70%的宽度 */
-                margin-left: 15%; /* 左右15%的边距 */
-                margin-right: 15%; /* 左右15%的边距 */
+                width: 100%;   /* 桌面版上容器占70%的宽度 */
+
             }
 
             #resultsTable td:nth-child(1), #resultsTable th:nth-child(1) {
@@ -195,58 +279,58 @@
 </head>
 <body>
 
-    <h1>American Community Survey 5-Year Data<br>(2018-2022)</h1>
+    <div class="main-container">
+        <div class="content-container">
+            <form id="censusForm">
+                <div class="form-row">
+                    <div>
+                        <label for="street">Street Address (e.g., 2201 Old Brick Rd):</label>
+                        <input type="text" id="street" name="street" required>
+                    </div>
+                    <div>
+                        <label for="city">City (e.g., Glen Allen):</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label for="state">State (e.g., VA):</label>
+                        <input type="text" id="state" name="state" required>
+                    </div>
+                    <div>
+                        <label for="zip">ZIP Code (e.g., 23060):</label>
+                        <input type="text" id="zip" name="zip" required>
+                    </div>
+                </div>
+                <button type="submit" id="searchButton">Search</button>
+            </form>
 
-    <div class="content-container">
-        <form id="censusForm">
-            <div class="form-row">
-                <div>
-                    <label for="street">Street Address (e.g., 2201 Old Brick Rd):</label>
-                    <input type="text" id="street" name="street" required>
-                </div>
-                <div>
-                    <label for="city">City (e.g., Glen Allen):</label>
-                    <input type="text" id="city" name="city" required>
-                </div>
+            <div id="error"></div>
+        </div>
+
+        <div class="table-container">
+            <div class="info-container">
+                <div id="tractInfo"></div>
+                <div id="searchCount">Search Results: 0</div>
             </div>
-            <div class="form-row">
-                <div>
-                    <label for="state">State (e.g., VA):</label>
-                    <input type="text" id="state" name="state" required>
-                </div>
-                <div>
-                    <label for="zip">ZIP Code (e.g., 23060):</label>
-                    <input type="text" id="zip" name="zip" required>
-                </div>
-            </div>
-            <button type="submit" id="searchButton">Search</button>
-        </form>
-
-        <div id="error"></div>
+            
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Results will be injected here -->
+                </tbody>
+            </table>
+        </div>
     </div>
-
-
-
-    <div class="table-container">
-        <div id="tractInfo"></div> <!-- 显示 census tract number -->
-        <table id="resultsTable">
-            <thead>
-                <tr>
-                    <th>Variable</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Results will be injected here -->
-            </tbody>
-        </table>
-    </div>
-    
-
 
     <div class="pagination" id="pagination"></div>
 
-    <div id="searchCount">Search Results: 0</div>
+ 
 
     <script>
         let variableMap = {};
@@ -542,14 +626,27 @@
             updatePagination();
         }
 
+
         function updatePagination() {
             const totalPages = Math.ceil(tableData.length / rowsPerPage);
             const paginationDiv = $('#pagination');
             paginationDiv.empty();
-
-            for (let i = 1; i <= totalPages; i++) {
+        
+            // Previous button
+            const prevButton = $('<button><</button>');
+            if (currentPage === 1) {
+                prevButton.prop('disabled', true);
+            } else {
+                prevButton.click(() => {
+                    currentPage -= 1;
+                    updateTable();
+                });
+            }
+            paginationDiv.append(prevButton);
+        
+            // First few pages
+            for (let i = 1; i <= 3 && i <= totalPages; i++) {
                 const button = $(`<button>${i}</button>`);
-                button.css('display', 'inline-block');
                 if (i === currentPage) {
                     button.addClass('active');
                 }
@@ -559,7 +656,56 @@
                 });
                 paginationDiv.append(button);
             }
+        
+            // Ellipsis if there are more than 4 pages
+            if (totalPages > 4) {
+                paginationDiv.append($('<span>...</span>'));
+        
+                // Last page button
+                const lastPageButton = $(`<button>${totalPages}</button>`);
+                if (totalPages === currentPage) {
+                    lastPageButton.addClass('active');
+                }
+                lastPageButton.click(() => {
+                    currentPage = totalPages;
+                    updateTable();
+                });
+                paginationDiv.append(lastPageButton);
+            }
+        
+            // ">" button (Next)
+            const nextButton = $('<button>></button>');
+            if (currentPage === totalPages) {
+                nextButton.prop('disabled', true);
+            } else {
+                nextButton.click(() => {
+                    currentPage += 1;
+                    updateTable();
+                });
+            }
+            paginationDiv.append(nextButton);
+        
+            // "skip" label, input box, and "page" text
+            const skipLabel = $('<span class="clickable-text"> skip </span>');
+            const input = $(`<input type="number" min="1" max="${totalPages}" value="${currentPage}" />`);
+            input.change(function () {
+                const page = parseInt($(this).val());
+                if (!isNaN(page) && page >= 1 && page <= totalPages) {
+                    currentPage = page;
+                    updateTable();
+                }
+            });
+            
+            // Make "page" a plain text element with a default cursor
+            const pageText = $('<span class="plain-text"> page </span>');
+            paginationDiv.append(skipLabel);
+            paginationDiv.append(input);
+            paginationDiv.append(pageText);
         }
+        
+
+
+
     </script>
 </body>
 </html>
